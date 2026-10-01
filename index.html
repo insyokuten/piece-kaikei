@@ -1,317 +1,262 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#111111">
-  <link rel="manifest" href="manifest.json">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PIECE会計</title>
 
-  <title>PIECE会計</title>
+<style>
+body{
+  margin:0;
+  background:#111;
+  color:white;
+  font-family:sans-serif;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+header{
+  padding:18px;
+  text-align:center;
+  font-size:24px;
+  font-weight:bold;
+  background:#222;
+}
 
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #111;
-      color: #fff;
-      padding-bottom: 30px;
-    }
+#menu{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  padding:15px;
+}
 
-    header {
-      background: #1c1c1c;
-      padding: 16px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
+.menu-button{
+  padding:20px 10px;
+  border:0;
+  border-radius:10px;
+  background:#333;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+}
 
-    .menu {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      padding: 15px;
-    }
+.price{
+  display:block;
+  margin-top:6px;
+  color:#ccc;
+}
 
-    .menu button {
-      min-height: 90px;
-      border: none;
-      border-radius: 12px;
-      background: #292929;
-      color: white;
-      padding: 12px;
-      font-size: 17px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+.order{
+  margin:0 15px 15px;
+  padding:15px;
+  background:#222;
+  border-radius:10px;
+}
 
-    .menu button:active {
-      transform: scale(0.96);
-      background: #444;
-    }
+.order-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 0;
+  border-bottom:1px solid #444;
+}
 
-    .price {
-      display: block;
-      margin-top: 7px;
-      font-size: 15px;
-      font-weight: normal;
-      color: #ccc;
-    }
+.name{
+  flex:1;
+}
 
-    .order {
-      margin: 10px 15px;
-      background: #1c1c1c;
-      border-radius: 12px;
-      padding: 15px;
-    }
+.qty button{
+  width:35px;
+  height:35px;
+}
 
-    .order h2 {
-      margin: 0 0 12px;
-      font-size: 20px;
-    }
-
-    .order-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 10px 0;
-      border-bottom: 1px solid #333;
-    }
-
-    .item-name {
-      flex: 1;
-      font-size: 16px;
-    }
-
-    .quantity {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .quantity button {
-      width: 36px;
-      height: 36px;
-      border: none;
-      border-radius: 8px;
-      background: #444;
-      color: white;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .quantity span {
-      min-width: 25px;
-      text-align: center;
-      font-size: 18px;
-    }
-
-    .item-total {
-      width: 80px;
-      text-align: right;
-      font-weight: bold;
-    }
-
-    .total {
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 2px solid #555;
-      display: flex;
-      justify-content: space-between;
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .payment {
-      margin: 10px 15px;
-      background: #1c1c1c;
-      border-radius: 12px;
-      padding: 15px;
-    }
-
-    .payment h2 {
-      margin: 0 0 12px;
-      font-size: 20px;
-    }
-
-    .payment input {
-      width: 100%;
-      height: 55px;
-      border: 1px solid #555;
-      border-radius: 10px;
-      background: #111;
-      color: #fff;
-      font-size: 24px;
-      text-align: right;
-      padding: 10px;
-    }
-
-    .change {
-      margin-top: 15px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 22px;
-      font-weight: bold;
-    }
-
-    .change-value {
-      font-size: 28px;
-    }
-
-    .complete {
-      width: calc(100% - 30px);
-      margin: 10px 15px;
-      height: 60px;
-      border: none;
-      border-radius: 12px;
-      background: #246b3c;
-      color: white;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .complete:disabled {
-      background: #444;
-      color: #888;
-    }
-
-    .reset {
-      width: calc(100% - 30px);
-      margin: 10px 15px;
-      height: 55px;
-      border: none;
-      border-radius: 12px;
-      background: #8b1e1e;
-      color: white;
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .sales-button {
-      width: calc(100% - 30px);
-      margin: 10px 15px;
-      height: 55px;
-      border: none;
-      border-radius: 12px;
-      background: #333;
-      color: white;
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .sales {
-      margin: 10px 15px;
-      background: #1c1c1c;
-      border-radius: 12px;
-      padding: 15px;
-      display: none;
-    }
-
-    .sales h2 {
-      margin-top: 0;
-    }
-
-    .sales-summary {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .summary-box {
-      background: #292929;
-      border-radius: 10px;
-      padding: 15px;
-      text-align: center;
-    }
-
-    .summary-label {
-      font-size: 14px;
-      color: #aaa;
-    }
-
-    .summary-value {
-      margin-top: 5px;
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .sales-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid #333;
-    }
-
-    .delete-sales {
-      width: 100%;
-      margin-top: 20px;
-      height: 50px;
-      border: none;
-      border-radius: 10px;
-      background: #8b1e1e;
-      color: white;
-      font-size: 16px;
-    }
-
-    .empty {
-      color: #888;
-      text-align: center;
-      padding: 20px 0;
-    }
-
-    .message {
-      position: fixed;
-      left: 15px;
-      right: 15px;
-      bottom: 15px;
-      background: #246b3c;
-      color: white;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-      font-weight: bold;
-      display: none;
-      z-index: 100;
-    }
-  </style>
+.total{
+  display:flex;
+  justify-content:space-between;
+  margin-top:15px;
+  font-size:24px;
+  font-weight:bold;
+}
+</style>
 </head>
 
 <body>
 
-<header>
-  PIECE会計
-</header>
+<header>PIECE会計</header>
 
-<!-- メニュー -->
-<div class="menu" id="menu"></div>
+<div id="menu"></div>
 
-<!-- 注文 -->
 <div class="order">
-  <h2>注文内容</h2>
 
-  <div id="orderList">
-    <div class="empty">
-      商品をタップしてください
-    </div>
-  </div>
+<h2>注文内容</h2>
 
-  <div class="total">
-    <span>合計</span>
-    <span id="total">¥0</span>
-  </div>
+<div id="orderList">
+商品をタップしてください
 </div>
 
-<!-- お会計 -->
-<div class="payment">
+<div class="total">
+<span>合計</span>
+<span id="total">¥0</span>
+</div>
 
-  <h2>お会計</h2>
+</div>
 
-  <input
+<script>
+
+const menuItems=[
+  {
+    id:"curry",
+    name:"ジャークチキンカレー",
+    price:1000
+  },
+  {
+    id:"adult",
+    name:"大人のカレー",
+    price:800
+  },
+  {
+    id:"extra",
+    name:"ジャークチキン増し",
+    price:300
+  },
+  {
+    id:"spicy",
+    name:"辛さ追加",
+    price:100
+  },
+  {
+    id:"beer",
+    name:"瓶ビール",
+    price:700
+  },
+  {
+    id:"tequila",
+    name:"テキーラ",
+    price:700
+  },
+  {
+    id:"set",
+    name:"アルコール＋ジャークチキン",
+    price:1200
+  }
+];
+
+let order={};
+
+function yen(n){
+  return "¥"+n.toLocaleString("ja-JP");
+}
+
+function createMenu(){
+
+  const menu=document.getElementById("menu");
+
+  menu.innerHTML="";
+
+  menuItems.forEach(item=>{
+
+    const button=document.createElement("button");
+
+    button.className="menu-button";
+
+    button.innerHTML=
+      item.name+
+      '<span class="price">'+
+      yen(item.price)+
+      '</span>';
+
+    button.onclick=function(){
+      addItem(item.id);
+    };
+
+    menu.appendChild(button);
+
+  });
+}
+
+function addItem(id){
+
+  if(!order[id]){
+    order[id]=0;
+  }
+
+  order[id]++;
+
+  render();
+
+}
+
+function changeQuantity(id,value){
+
+  order[id]+=value;
+
+  if(order[id]<=0){
+    delete order[id];
+  }
+
+  render();
+
+}
+
+function render(){
+
+  const list=document.getElementById("orderList");
+
+  list.innerHTML="";
+
+  let total=0;
+  let count=0;
+
+  menuItems.forEach(item=>{
+
+    const qty=order[item.id]||0;
+
+    if(qty>0){
+
+      count++;
+
+      const subtotal=item.price*qty;
+
+      total+=subtotal;
+
+      const row=document.createElement("div");
+
+      row.className="order-row";
+
+      row.innerHTML=
+        '<div class="name">'+
+        item.name+
+        '</div>'+
+        '<div class="qty">'+
+        '<button onclick="changeQuantity(\''+
+        item.id+
+        '\',-1)">−</button>'+
+        '<span>'+qty+'</span>'+
+        '<button onclick="changeQuantity(\''+
+        item.id+
+        '\',1)">＋</button>'+
+        '</div>'+
+        '<div>'+
+        yen(subtotal)+
+        '</div>';
+
+      list.appendChild(row);
+
+    }
+
+  });
+
+  if(count===0){
+    list.textContent="商品をタップしてください";
+  }
+
+  document.getElementById("total").textContent=yen(total);
+
+}
+
+createMenu();
+
+render();
+
+</script>
+
+</body>
+</html>
