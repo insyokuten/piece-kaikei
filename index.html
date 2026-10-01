@@ -129,6 +129,59 @@
       font-weight: bold;
     }
 
+    .payment {
+      margin: 10px 15px;
+      background: #1c1c1c;
+      border-radius: 12px;
+      padding: 15px;
+    }
+
+    .payment h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+    }
+
+    .payment input {
+      width: 100%;
+      height: 55px;
+      border: 1px solid #555;
+      border-radius: 10px;
+      background: #111;
+      color: #fff;
+      font-size: 24px;
+      text-align: right;
+      padding: 10px;
+    }
+
+    .change {
+      margin-top: 15px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .change-value {
+      font-size: 28px;
+    }
+
+    .complete {
+      width: calc(100% - 30px);
+      margin: 10px 15px;
+      height: 60px;
+      border: none;
+      border-radius: 12px;
+      background: #246b3c;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .complete:disabled {
+      background: #444;
+      color: #888;
+    }
+
     .reset {
       width: calc(100% - 30px);
       margin: 10px 15px;
@@ -141,193 +194,124 @@
       font-weight: bold;
     }
 
+    .sales-button {
+      width: calc(100% - 30px);
+      margin: 10px 15px;
+      height: 55px;
+      border: none;
+      border-radius: 12px;
+      background: #333;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .sales {
+      margin: 10px 15px;
+      background: #1c1c1c;
+      border-radius: 12px;
+      padding: 15px;
+      display: none;
+    }
+
+    .sales h2 {
+      margin-top: 0;
+    }
+
+    .sales-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .summary-box {
+      background: #292929;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .summary-label {
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .summary-value {
+      margin-top: 5px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .sales-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #333;
+    }
+
+    .delete-sales {
+      width: 100%;
+      margin-top: 20px;
+      height: 50px;
+      border: none;
+      border-radius: 10px;
+      background: #8b1e1e;
+      color: white;
+      font-size: 16px;
+    }
+
     .empty {
       color: #888;
       text-align: center;
       padding: 20px 0;
+    }
+
+    .message {
+      position: fixed;
+      left: 15px;
+      right: 15px;
+      bottom: 15px;
+      background: #246b3c;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: bold;
+      display: none;
+      z-index: 100;
     }
   </style>
 </head>
 
 <body>
 
-  <header>
-    PIECE会計
-  </header>
+<header>
+  PIECE会計
+</header>
 
-  <div class="menu" id="menu"></div>
+<!-- メニュー -->
+<div class="menu" id="menu"></div>
 
-  <div class="order">
-    <h2>注文内容</h2>
-    <div id="orderList">
-      <div class="empty">商品をタップしてください</div>
-    </div>
+<!-- 注文 -->
+<div class="order">
+  <h2>注文内容</h2>
 
-    <div class="total">
-      <span>合計</span>
-      <span id="total">¥0</span>
+  <div id="orderList">
+    <div class="empty">
+      商品をタップしてください
     </div>
   </div>
 
-  <button class="reset" onclick="resetOrder()">
-    会計をリセット
-  </button>
+  <div class="total">
+    <span>合計</span>
+    <span id="total">¥0</span>
+  </div>
+</div>
 
-  <script>
-    const menuItems = [
-      {
-        id: "jerk-curry",
-        name: "ジャークチキンカレー",
-        price: 1000
-      },
-      {
-        id: "adult-curry",
-        name: "大人のカレー",
-        price: 800
-      },
-      {
-        id: "jerk-extra",
-        name: "ジャークチキン増し",
-        price: 300
-      },
-      {
-        id: "spicy",
-        name: "辛さ追加",
-        price: 100
-      },
-      {
-        id: "beer",
-        name: "瓶ビール",
-        price: 700
-      },
-      {
-        id: "tequila",
-        name: "テキーラ",
-        price: 700
-      },
-      {
-        id: "set",
-        name: "アルコール＋ジャークチキン",
-        price: 1200
-      }
-    ];
+<!-- お会計 -->
+<div class="payment">
 
-    let order = {};
+  <h2>お会計</h2>
 
-    function yen(value) {
-      return "¥" + value.toLocaleString("ja-JP");
-    }
-
-    function createMenu() {
-      const menu = document.getElementById("menu");
-
-      menu.innerHTML = "";
-
-      menuItems.forEach(item => {
-        const button = document.createElement("button");
-
-        button.innerHTML = `
-          ${item.name}
-          <span class="price">${yen(item.price)}</span>
-        `;
-
-        button.addEventListener("click", () => {
-          addItem(item.id);
-        });
-
-        menu.appendChild(button);
-      });
-    }
-
-    function addItem(id) {
-      if (!order[id]) {
-        order[id] = 0;
-      }
-
-      order[id]++;
-      renderOrder();
-    }
-
-    function changeQuantity(id, amount) {
-      if (!order[id]) {
-        return;
-      }
-
-      order[id] += amount;
-
-      if (order[id] <= 0) {
-        delete order[id];
-      }
-
-      renderOrder();
-    }
-
-    function renderOrder() {
-      const orderList = document.getElementById("orderList");
-      const totalElement = document.getElementById("total");
-
-      orderList.innerHTML = "";
-
-      let total = 0;
-      let hasItems = false;
-
-      menuItems.forEach(item => {
-        const quantity = order[item.id] || 0;
-
-        if (quantity > 0) {
-          hasItems = true;
-
-          const subtotal = item.price * quantity;
-          total += subtotal;
-
-          const row = document.createElement("div");
-          row.className = "order-item";
-
-          row.innerHTML = `
-            <div class="item-name">
-              ${item.name}
-            </div>
-
-            <div class="quantity">
-              <button onclick="changeQuantity('${item.id}', -1)">−</button>
-              <span>${quantity}</span>
-              <button onclick="changeQuantity('${item.id}', 1)">＋</button>
-            </div>
-
-            <div class="item-total">
-              ${yen(subtotal)}
-            </div>
-          `;
-
-          orderList.appendChild(row);
-        }
-      });
-
-      if (!hasItems) {
-        orderList.innerHTML =
-          '<div class="empty">商品をタップしてください</div>';
-      }
-
-      totalElement.textContent = yen(total);
-    }
-
-    function resetOrder() {
-      order = {};
-      renderOrder();
-    }
-
-    createMenu();
-    renderOrder();
-
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("sw.js")
-          .catch(error => {
-            console.log("Service Worker error:", error);
-          });
-      });
-    }
-  </script>
-
-</body>
-</html>
+  <input
