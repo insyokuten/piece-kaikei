@@ -1,1212 +1,548 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1"
->
-
-<meta
-  name="theme-color"
-  content="#111111"
->
-
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111111">
 <title>PIECE会計</title>
-
+<link rel="manifest" href="./manifest.json">
 <style>
-
-*{
-  box-sizing:border-box;
-}
-
+*{box-sizing:border-box}
 body{
-
-  margin:0;
-
-  background:#111;
-
-  color:white;
-
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Noto Sans JP",
-    sans-serif;
-
+ margin:0;
+ background:#111;
+ color:#fff;
+ font-family:sans-serif;
 }
-
 header{
-
-  padding:18px;
-
-  text-align:center;
-
-  font-size:24px;
-
-  font-weight:bold;
-
-  background:#222;
-
+ padding:18px;
+ background:#222;
+ text-align:center;
+ font-size:24px;
+ font-weight:bold;
 }
-
-#menu{
-
-  display:grid;
-
-  grid-template-columns:
-    1fr 1fr;
-
-  gap:10px;
-
-  padding:15px;
-
+h2{font-size:19px;margin:0 0 12px}
+.category{
+ padding:12px 15px 0;
+ font-size:18px;
+ font-weight:bold;
+ color:#e9bd75;
 }
-
+.menu-grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
+ padding:10px 15px;
+}
 .menu-button{
-
-  padding:20px 10px;
-
-  border:0;
-
-  border-radius:10px;
-
-  background:#333;
-
-  color:white;
-
-  font-size:16px;
-
-  font-weight:bold;
-
-  min-height:85px;
-
+ min-height:76px;
+ padding:12px 8px;
+ border:0;
+ border-radius:10px;
+ background:#333;
+ color:white;
+ font-size:15px;
+ font-weight:bold;
 }
-
-.menu-button:active{
-
-  background:#555;
-
-  transform:scale(.97);
-
-}
-
 .price{
-
-  display:block;
-
-  margin-top:6px;
-
-  color:#ccc;
-
-  font-size:15px;
-
+ display:block;
+ margin-top:7px;
+ color:#ddd;
+}
+.panel{
+ margin:15px;
+ padding:15px;
+ background:#222;
+ border-radius:10px;
 }
 
-.order{
-
-  margin:0 15px 15px;
-
-  padding:15px;
-
-  background:#222;
-
-  border-radius:10px;
-
+  .order-row{
+ display:flex;
+ align-items:center;
+ gap:8px;
+ padding:10px 0;
+ border-bottom:1px solid #444;
 }
-
-.order h2{
-
-  margin-top:0;
-
-}
-
-.order-row{
-
-  display:flex;
-
-  align-items:center;
-
-  gap:8px;
-
-  padding:10px 0;
-
-  border-bottom:1px solid #444;
-
-}
-
-.name{
-
-  flex:1;
-
-}
-
+.name{flex:1;font-size:14px}
 .qty{
-
-  display:flex;
-
-  align-items:center;
-
-  gap:5px;
-
+ display:flex;
+ align-items:center;
+ gap:6px;
 }
-
 .qty button{
-
-  width:38px;
-
-  height:38px;
-
-  font-size:20px;
-
-  border:0;
-
-  border-radius:6px;
-
+ width:36px;
+ height:36px;
+ border:0;
+ border-radius:6px;
+ font-size:20px;
 }
-
 .qty span{
-
-  min-width:25px;
-
-  text-align:center;
-
+ min-width:20px;
+ text-align:center;
 }
-
 .item-price{
-
-  width:80px;
-
-  text-align:right;
-
+ min-width:75px;
+ text-align:right;
 }
-
-.total{
-
-  display:flex;
-
-  justify-content:space-between;
-
-  margin-top:15px;
-
-  font-size:24px;
-
-  font-weight:bold;
-
+.total,.change{
+ display:flex;
+ justify-content:space-between;
+ margin-top:15px;
+ font-size:23px;
+ font-weight:bold;
 }
-
-.payment{
-
-  margin:0 15px 15px;
-
-  padding:15px;
-
-  background:#222;
-
-  border-radius:10px;
-
-}
-
-.payment h2{
-
-  margin-top:0;
-
-}
-
 #received{
-
-  width:100%;
-
-  padding:15px;
-
-  font-size:20px;
-
-  border:0;
-
-  border-radius:8px;
-
-  margin-bottom:15px;
-
+ width:100%;
+ padding:15px;
+ border:0;
+ border-radius:8px;
+ font-size:20px;
 }
-
-.change{
-
-  display:flex;
-
-  justify-content:space-between;
-
-  font-size:24px;
-
-  font-weight:bold;
-
+.action{
+ display:block;
+ width:calc(100% - 30px);
+ margin:10px 15px;
+ padding:16px;
+ border:0;
+ border-radius:10px;
+ color:white;
+ font-size:17px;
+ font-weight:bold;
+ background:#444;
 }
-
-.complete{
-
-  display:block;
-
-  width:calc(100% - 30px);
-
-  margin:15px;
-
-  padding:18px;
-
-  border:0;
-
-  border-radius:10px;
-
-  background:#2e7d32;
-
-  color:white;
-
-  font-size:20px;
-
-  font-weight:bold;
-
-}
-
+.complete{background:#287a36}
 .complete:disabled{
-
-  background:#444;
-
-  color:#888;
-
+ background:#444;
+ color:#888;
 }
-
-.reset{
-
-  display:block;
-
-  width:calc(100% - 30px);
-
-  margin:0 15px 10px;
-
-  padding:14px;
-
-  border:0;
-
-  border-radius:10px;
-
-  background:#555;
-
-  color:white;
-
-  font-size:16px;
-
-}
-
-.sales-button{
-
-  display:block;
-
-  width:calc(100% - 30px);
-
-  margin:10px 15px;
-
-  padding:15px;
-
-  border:0;
-
-  border-radius:10px;
-
-  background:#333;
-
-  color:white;
-
-  font-size:16px;
-
-}
-
-.sales{
-
-  display:none;
-
-  margin:15px;
-
-  padding:15px;
-
-  background:#222;
-
-  border-radius:10px;
-
-}
-
-.sales h2{
-
-  margin-top:0;
-
-}
-
-.summary{
-
-  display:grid;
-
-  grid-template-columns:1fr 1fr;
-
-  gap:10px;
-
-}
-
-.summary-box{
-
-  padding:15px;
-
-  background:#333;
-
-  border-radius:8px;
-
-  text-align:center;
-
-}
-
-.summary-value{
-
-  margin-top:8px;
-
-  font-size:22px;
-
-  font-weight:bold;
-
-}
-
+.sales{display:none}
 .sales-row{
-
-  display:flex;
-
-  justify-content:space-between;
-
-  padding:12px 0;
-
-  border-bottom:1px solid #444;
-
+ display:flex;
+ justify-content:space-between;
+ padding:10px 0;
+ border-bottom:1px solid #444;
 }
-
-.delete-sales{
-
-  width:100%;
-
-  margin-top:20px;
-
-  padding:14px;
-
-  border:0;
-
-  border-radius:8px;
-
-  background:#722;
-
-  color:white;
-
-  font-size:15px;
-
-}
-
 .message{
-
-  display:none;
-
-  position:fixed;
-
-  left:15px;
-
-  right:15px;
-
-  bottom:20px;
-
-  padding:15px;
-
-  background:#333;
-
-  border-radius:10px;
-
-  text-align:center;
-
-  font-weight:bold;
-
-  box-shadow:
-    0 4px 20px rgba(0,0,0,.5);
-
+ display:none;
+ position:fixed;
+ bottom:20px;
+ left:15px;
+ right:15px;
+ padding:15px;
+ background:#333;
+ border-radius:10px;
+ text-align:center;
 }
-
 </style>
-
 </head>
-
 <body>
-
-<header>
-PIECE会計
-</header>
-
+<header>PIECE会計</header>
 <div id="menu"></div>
 
-<div class="order">
-
+<div class="panel">
 <h2>注文内容</h2>
-
 <div id="orderList">
 商品をタップしてください
 </div>
-
 <div class="total">
-
-<span>
-合計
-</span>
-
-<span id="total">
-¥0
-</span>
-
+<span>合計</span>
+<span id="total">¥0</span>
+</div>
 </div>
 
-</div>
-
-<div class="payment">
-
+<div class="panel">
 <h2>お会計</h2>
-
 <input
-  id="received"
-  type="number"
-  inputmode="numeric"
-  placeholder="お預かり金額"
+ id="received"
+ type="number"
+ inputmode="numeric"
+ min="0"
+ placeholder="お預かり金額"
 >
-
 <div class="change">
-
-<span>
-お釣り
-</span>
-
-<span id="change">
-¥0
-</span>
-
+<span>お釣り</span>
+<span id="change">¥0</span>
 </div>
-
 </div>
 
 <button
-  class="complete"
-  id="completeButton"
-  disabled
->
-会計完了
-</button>
+ class="action complete"
+ id="completeButton"
+ disabled
+>会計完了</button>
 
 <button
-  class="reset"
-  id="resetButton"
->
-会計をリセット
-</button>
+ class="action"
+ id="resetButton"
+>会計をリセット</button>
 
 <button
-  class="sales-button"
-  id="salesButton"
->
-📊 売上を確認
-</button>
+ class="action"
+ id="salesButton"
+>📊 売上を確認</button>
 
-<div
-  class="sales"
-  id="sales"
->
-
-<h2>
-売上集計
-</h2>
-
-<div class="summary">
-
-<div class="summary-box">
-
-<div>
-会計件数
+<div class="panel sales" id="sales">
+<h2>売上集計</h2>
+<div class="sales-row">
+<span>会計件数</span>
+<strong id="salesCount">0件</strong>
 </div>
-
-<div
-  class="summary-value"
-  id="salesCount"
->
-0件
+<div class="sales-row">
+<span>売上金額</span>
+<strong id="salesTotal">¥0</strong>
 </div>
-
-</div>
-
-<div class="summary-box">
-
-<div>
-売上金額
-</div>
-
-<div
-  class="summary-value"
-  id="salesTotal"
->
-¥0
-</div>
-
-</div>
-
-</div>
-
-<h3>
+<h2 style="margin-top:20px">
 商品別販売数
-</h3>
-
+</h2>
 <div id="productSales"></div>
-
 <button
-  class="delete-sales"
-  id="deleteSales"
->
-売上データを全削除
-</button>
-
+ class="action"
+ id="deleteSales"
+ style="width:100%;margin:20px 0 0;background:#822"
+>売上データを全削除</button>
 </div>
 
-<div
-  class="message"
-  id="message"
-></div>
+<div class="message" id="message"></div>
+
 <script>
-
 const menuItems = [
+{category:"FOOD",id:"kids_curry",name:"お子さまカレー",price:500},
+{category:"FOOD",id:"chickpea_curry",name:"ひよこ豆と挽き肉のカレー",price:800},
+{category:"FOOD",id:"jerk_curry",name:"ジャークチキンカレー（6切れ）",price:1300},
+{category:"FOOD",id:"jerk_extra",name:"ジャークチキン増し（＋3切れ）",price:200},
+{category:"FOOD",id:"spicy",name:"辛さUP",price:100},
+{category:"FOOD",id:"jerk_chicken",name:"ジャークチキン（6切れ）",price:600},
+{category:"FOOD",id:"nuts",name:"ミックスナッツ",price:500},
+{category:"FOOD",id:"venison",name:"鹿ジャーキー",price:700},{category:"ALCOHOL",id:"kabosu_sour",name:"臼杵産かぼすサワー",price:600},
+{category:"ALCOHOL",id:"beer",name:"瓶ビール（アサヒ・コロナ）",price:800},
+{category:"ALCOHOL",id:"kabosu_gin",name:"臼杵かぼすジントニック",price:700},
+{category:"ALCOHOL",id:"gin_tonic",name:"ジントニック",price:600},
+{category:"ALCOHOL",id:"tequila_sunrise",name:"竹宵テキーラサンライズ",price:600},
+{category:"ALCOHOL",id:"tequila",name:"テキーラ",price:500},
+{category:"ALCOHOL",id:"highball",name:"ハイボール",price:600},
+{category:"ALCOHOL",id:"nikaso",name:"ニカソー",price:600}　,{category:"NON-ALCOHOL",id:"green_tea",name:"緑茶",price:200},
+{category:"NON-ALCOHOL",id:"orange",name:"オレンジジュース",price:200},
+{category:"NON-ALCOHOL",id:"mocktail",name:"ノンアルコールカクテル",price:500},
+{category:"NON-ALCOHOL",id:"nonalc_beer",name:"ノンアルコールビール",price:400},
 
-  {
-    id:"curry",
-    name:"ジャークチキンカレー",
-    price:1000
-  },
-
-  {
-    id:"adult",
-    name:"大人のカレー",
-    price:800
-  },
-
-  {
-    id:"extra",
-    name:"ジャークチキン増し",
-    price:300
-  },
-
-  {
-    id:"spicy",
-    name:"辛さ追加",
-    price:100
-  },
-
-  {
-    id:"beer",
-    name:"瓶ビール",
-    price:700
-  },
-
-  {
-    id:"tequila",
-    name:"テキーラ",
-    price:700
-  },
-
-  {
-    id:"set",
-    name:"アルコール＋ジャークチキン",
-    price:1200
-  }
-
+{category:"SET",id:"jerk_sour",name:"JERK & SOUR",price:1000},
+{category:"SET",id:"jerk_beer",name:"JERK & BEER",price:1200},
+{category:"SET",id:"snack_set",name:"おつまみセット",price:1000}
 ];
-
 
 let order = {};
 
-
-function yen(number){
-
-  return "¥" +
-    number.toLocaleString("ja-JP");
-
+function yen(n){
+ return "¥"+n.toLocaleString("ja-JP");
 }
+  function createMenu(){
 
+ const menu =
+  document.getElementById("menu");
 
-function createMenu(){
+ menu.innerHTML = "";
 
-  const menu =
-    document.getElementById("menu");
+ const categories = [
+  "FOOD",
+  "ALCOHOL",
+  "NON-ALCOHOL",
+  "SET"
+ ];
 
-  menu.innerHTML = "";
+ categories.forEach(category => {
 
+  const title =
+   document.createElement("div");
 
-  menuItems.forEach(item => {
+  title.className = "category";
+  title.textContent = category;
+  menu.appendChild(title);
+
+  const grid =
+   document.createElement("div");
+
+  grid.className = "menu-grid";
+
+  menuItems
+   .filter(item => item.category === category)
+   .forEach(item => {
 
     const button =
-      document.createElement("button");
+     document.createElement("button");
 
-
-    button.className =
-      "menu-button";
-
+    button.className = "menu-button";
 
     button.innerHTML =
-      item.name +
-      '<span class="price">' +
-      yen(item.price) +
-      '</span>';
+     item.name +
+     '<span class="price">' +
+     yen(item.price) +
+     '</span>';
 
+    button.onclick = function(){
+     addItem(item.id);
+    };
 
-    button.addEventListener(
-      "click",
-      function(){
+    grid.appendChild(button);
 
-        addItem(item.id);
+   });
 
-      }
-    );
+  menu.appendChild(grid);
 
-
-    menu.appendChild(button);
-
-  });
-
-}
-
-
-function addItem(id){
-
-  if(!order[id]){
-
-    order[id] = 0;
+ });
 
   }
 
-
-  order[id]++;
-
-
-  render();
-
+  function addItem(id){
+ order[id] = (order[id] || 0) + 1;
+ render();
 }
 
+function changeQuantity(id,amount){
+ if(!order[id]) return;
 
-function changeQuantity(id, amount){
+ order[id] += amount;
 
-  if(!order[id]){
+ if(order[id] <= 0){
+  delete order[id];
+ }
 
-    return;
-
-  }
-
-
-  order[id] += amount;
-
-
-  if(order[id] <= 0){
-
-    delete order[id];
-
-  }
-
-
-  render();
-
+ render();
 }
-
 
 function getTotal(){
-
-  let total = 0;
-
-
-  menuItems.forEach(item => {
-
-    const quantity =
-      order[item.id] || 0;
-
-
-    total +=
-      item.price * quantity;
-
-  });
-
-
-  return total;
-
+ return menuItems.reduce((sum,item)=>{
+  return sum +
+   item.price * (order[item.id] || 0);
+ },0);
 }
-
 
 function render(){
+ const list =
+  document.getElementById("orderList");
 
-  const list =
-    document.getElementById(
-      "orderList"
-    );
+ list.innerHTML = "";
 
+ menuItems.forEach(item=>{
+  const qty = order[item.id] || 0;
+  if(qty === 0) return;
 
-  list.innerHTML = "";
+  const row =
+   document.createElement("div");
 
+  row.className = "order-row";
 
-  let itemCount = 0;
+  const name =
+   document.createElement("div");
+  name.className = "name";
+  name.textContent = item.name;
 
+  const controls =
+   document.createElement("div");
+  controls.className = "qty";
 
-  menuItems.forEach(item => {
+  const minus =
+   document.createElement("button");
+  minus.textContent = "−";
+  minus.onclick = ()=>changeQuantity(item.id,-1);
 
-    const quantity =
-      order[item.id] || 0;
+  const count =
+   document.createElement("span");
+  count.textContent = qty;
 
+  const plus =
+   document.createElement("button");
+  plus.textContent = "＋";
+  plus.onclick = ()=>changeQuantity(item.id,1);
 
-    if(quantity > 0){
+  controls.append(minus,count,plus);
 
-      itemCount++;
+  const price =
+   document.createElement("div");
+  price.className = "item-price";
+  price.textContent = yen(item.price * qty);
 
+  row.append(name,controls,price);
+  list.appendChild(row);
+ });
 
-      const row =
-        document.createElement("div");
+ if(!list.children.length){
+  list.textContent = "商品をタップしてください";
+ }
 
+ document.getElementById("total").textContent =
+  yen(getTotal());
 
-      row.className =
-        "order-row";
-
-
-      const subtotal =
-        item.price * quantity;
-
-
-      row.innerHTML = `
-
-        <div class="name">
-          ${item.name}
-        </div>
-
-        <div class="qty">
-
-          <button
-            onclick="
-              changeQuantity(
-                '${item.id}',
-                -1
-              )
-            "
-          >
-            −
-          </button>
-
-          <span>
-            ${quantity}
-          </span>
-
-          <button
-            onclick="
-              changeQuantity(
-                '${item.id}',
-                1
-              )
-            "
-          >
-            ＋
-          </button>
-
-        </div>
-
-        <div class="item-price">
-          ${yen(subtotal)}
-        </div>
-
-      `;
-
-
-      list.appendChild(row);
-
-    }
-
-  });
-
-
-  if(itemCount === 0){
-
-    list.textContent =
-      "商品をタップしてください";
-
-  }
-
-
-  document.getElementById(
-    "total"
-  ).textContent =
-    yen(getTotal());
-
-
-  calculateChange();
-
+ calculateChange();
 }
 
+  function calculateChange(){
 
-function calculateChange(){
+ const total = getTotal();
 
-  const total =
-    getTotal();
+ const received = Number(
+  document.getElementById("received").value
+ );
 
+ const change = received - total;
 
-  const received =
-    Number(
-      document.getElementById(
-        "received"
-      ).value
-    ) || 0;
+ document.getElementById("change").textContent =
+  yen(Math.max(change,0));
 
-
-  const change =
-    received - total;
-
-
-  document.getElementById(
-    "change"
-  ).textContent =
-    yen(
-      Math.max(change, 0)
-    );
-
-
-  const completeButton =
-    document.getElementById(
-      "completeButton"
-    );
-
-
-  if(
-    total > 0 &&
-    received >= total
-  ){
-
-    completeButton.disabled =
-      false;
-
-  }else{
-
-    completeButton.disabled =
-      true;
-
-  }
-
+ document.getElementById("completeButton").disabled =
+  !(total > 0 && received >= total);
 }
 
+document.getElementById("received")
+ .addEventListener("input",calculateChange);
 
-document.getElementById(
-  "received"
-).addEventListener(
-  "input",
-  calculateChange
-);
+  function saveSale(){
 
+ const total = getTotal();
 
-createMenu();
+ const received = Number(
+  document.getElementById("received").value
+ );
 
-render();
-function saveSale(){
+ if(total <= 0 || received < total){
+  return;
+ }
 
-  const total =
-    getTotal();
+ const sales = JSON.parse(
+  localStorage.getItem("pieceSales") || "[]"
+ );
 
-  const received =
-    Number(
-      document.getElementById(
-        "received"
-      ).value
-    ) || 0;
+ sales.push({
+  date:new Date().toISOString(),
+  total:total,
+  received:received,
+  change:received-total,
+  items:{...order}
+ });
 
-
-  if(
-    total <= 0 ||
-    received < total
-  ){
-
-    return;
-
-  }
-
-
-  const sales =
-    JSON.parse(
-      localStorage.getItem(
-        "pieceSales"
-      ) || "[]"
-    );
-
-
-  sales.push({
-
-    date:
-      new Date().toISOString(),
-
-    total:
-      total,
-
-    received:
-      received,
-
-    change:
-      received - total,
-
-    items:
-      {...order}
-
-  });
-
-
+ try{
   localStorage.setItem(
-    "pieceSales",
-    JSON.stringify(sales)
+   "pieceSales",
+   JSON.stringify(sales)
   );
+ }catch(error){
+  alert("売上を保存できませんでした。");
+  return;
+ }
 
+ order = {};
 
-  showMessage(
-    "会計完了しました"
-  );
+ document.getElementById("received").value = "";
 
-
-  order = {};
-
-  document.getElementById(
-    "received"
-  ).value = "";
-
-
-  render();
-
-  updateSales();
-
+ render();
+ updateSales();
+ showMessage("会計完了しました");
 }
-
 
 function showMessage(text){
 
-  const message =
-    document.getElementById(
-      "message"
-    );
+ const message =
+  document.getElementById("message");
 
+ message.textContent = text;
+ message.style.display = "block";
 
-  message.textContent =
-    text;
-
-
-  message.style.display =
-    "block";
-
-
-  setTimeout(
-    function(){
-
-      message.style.display =
-        "none";
-
-    },
-    2000
-  );
+ setTimeout(()=>{
+  message.style.display = "none";
+ },2000);
 
 }
 
+  function updateSales(){
 
-function updateSales(){
+ const sales = JSON.parse(
+  localStorage.getItem("pieceSales") || "[]"
+ );
 
-  const sales =
-    JSON.parse(
-      localStorage.getItem(
-        "pieceSales"
-      ) || "[]"
-    );
+ const total = sales.reduce(
+  (sum,sale)=>sum+sale.total,0
+ );
 
+ document.getElementById("salesCount")
+  .textContent = sales.length+"件";
 
-  let total = 0;
+ document.getElementById("salesTotal")
+  .textContent = yen(total);
 
+ const counts = {};
 
-  sales.forEach(
-    function(sale){
+ sales.forEach(sale=>{
+  Object.entries(sale.items || {})
+   .forEach(([id,qty])=>{
+    counts[id] = (counts[id] || 0)+qty;
+   });
+ });
 
-      total += sale.total;
+ const container =
+  document.getElementById("productSales");
 
-    }
-  );
+ container.innerHTML = "";
 
+ menuItems.forEach(item=>{
+  const row = document.createElement("div");
+  row.className = "sales-row";
 
-  document.getElementById(
-    "salesCount"
-  ).textContent =
-    sales.length + "件";
+  const name = document.createElement("span");
+  name.textContent = item.name;
 
+  const count = document.createElement("strong");
+  count.textContent = (counts[item.id] || 0)+"個";
 
-  document.getElementById(
-    "salesTotal"
-  ).textContent =
-    yen(total);
-
-
-  const counts = {};
-
-
-  menuItems.forEach(
-    function(item){
-
-      counts[item.id] = 0;
-
-    }
-  );
-
-
-  sales.forEach(
-    function(sale){
-
-      Object.keys(
-        sale.items
-      ).forEach(
-        function(id){
-
-          if(
-            counts[id] !== undefined
-          ){
-
-            counts[id] +=
-              sale.items[id];
-
-          }
-
-        }
-      );
-
-    }
-  );
-
-
-  const container =
-    document.getElementById(
-      "productSales"
-    );
-
-
-  container.innerHTML = "";
-
-
-  menuItems.forEach(
-    function(item){
-
-      const row =
-        document.createElement(
-          "div"
-        );
-
-
-      row.className =
-        "sales-row";
-
-
-      row.innerHTML = `
-
-        <span>
-          ${item.name}
-        </span>
-
-        <strong>
-          ${counts[item.id]}個
-        </strong>
-
-      `;
-
-
-      container.appendChild(row);
-
-    }
-  );
-
-}
-
-
-function toggleSales(){
-
-  const sales =
-    document.getElementById(
-      "sales"
-    );
-
-
-  if(
-    sales.style.display ===
-    "block"
-  ){
-
-    sales.style.display =
-      "none";
-
-  }else{
-
-    sales.style.display =
-      "block";
-
-    updateSales();
+  row.append(name,count);
+  container.appendChild(row);
+ });
 
   }
 
-}
+  function toggleSales(){
+ const panel = document.getElementById("sales");
 
+ if(panel.style.display === "block"){
+  panel.style.display = "none";
+ }else{
+  updateSales();
+  panel.style.display = "block";
+ }
+}
 
 function deleteSales(){
+ if(!confirm("売上データをすべて削除しますか？")){
+  return;
+ }
 
-  if(
-    !confirm(
-      "売上データをすべて削除しますか？"
-    )
-  ){
-
-    return;
-
-  }
-
-
-  localStorage.removeItem(
-    "pieceSales"
-  );
-
-
-  updateSales();
-
-
-  showMessage(
-    "売上データを削除しました"
-  );
-
+ localStorage.removeItem("pieceSales");
+ updateSales();
+ showMessage("売上データを削除しました");
 }
-document.getElementById(
-  "completeButton"
-).addEventListener(
-  "click",
-  saveSale
-);
 
+function resetOrder(){
+ order = {};
+ document.getElementById("received").value = "";
+ render();
+}
 
-document.getElementById(
-  "salesButton"
-).addEventListener(
-  "click",
-  toggleSales
-);
+document.getElementById("completeButton")
+ .addEventListener("click",saveSale);
 
+document.getElementById("resetButton")
+ .addEventListener("click",resetOrder);
 
-document.getElementById(
-  "deleteSales"
-).addEventListener(
-  "click",
-  deleteSales
-);
+document.getElementById("salesButton")
+ .addEventListener("click",toggleSales);
 
+document.getElementById("deleteSales")
+ .addEventListener("click",deleteSales);
 
+createMenu();
+render();
 updateSales();
 
-
 </script>
-
 </body>
-
 </html>
+
