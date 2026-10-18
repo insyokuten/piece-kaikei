@@ -1,548 +1,814 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111111">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>PIECE会計</title>
 <link rel="manifest" href="./manifest.json">
+
 <style>
+:root{
+  --bg:#111;
+  --panel:#242424;
+  --button:#363636;
+  --accent:#e9bd75;
+  --green:#287a36;
+}
 *{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
 body{
- margin:0;
- background:#111;
- color:#fff;
- font-family:sans-serif;
+  background:var(--bg);
+  color:white;
+  font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP",sans-serif;
+}
+button,input{font:inherit}
+button{cursor:pointer;touch-action:manipulation}
+button:focus-visible{outline:2px solid var(--accent)}
+button:disabled{cursor:not-allowed;opacity:.45}
+[hidden]{display:none!important}
+
+.app{
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+  height:100dvh;
 }
 header{
- padding:18px;
- background:#222;
- text-align:center;
- font-size:24px;
- font-weight:bold;
+  flex:none;
+  padding:12px 16px;
+  background:#202020;
+  font-size:22px;
+  font-weight:800;
+  text-align:center;
 }
-h2{font-size:19px;margin:0 0 12px}
+.menu-area{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  padding-bottom:15px;
+}
 .category{
- padding:12px 15px 0;
- font-size:18px;
- font-weight:bold;
- color:#e9bd75;
+  margin:18px 15px 0;
+  font-size:17px;
+  font-weight:800;
+  color:var(--accent);
 }
 .menu-grid{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:10px;
- padding:10px 15px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  padding:10px 15px;
 }
 .menu-button{
- min-height:76px;
- padding:12px 8px;
- border:0;
- border-radius:10px;
- background:#333;
- color:white;
- font-size:15px;
- font-weight:bold;
+  position:relative;
+  min-height:77px;
+  padding:12px 8px;
+  border:1px solid #444;
+  border-radius:11px;
+  background:var(--button);
+  color:#fff;
+  font-size:14px;
+  font-weight:700;
+  transition:background .12s,transform .12s,border-color .12s;
+}
+.menu-button:active,
+.menu-button.flash{
+  background:#735a35;
+  border-color:var(--accent);
+  transform:scale(.96);
 }
 .price{
- display:block;
- margin-top:7px;
- color:#ddd;
+  display:block;
+  margin-top:7px;
+  color:var(--accent);
+  font-size:16px;
+  font-weight:800;
 }
-.panel{
- margin:15px;
- padding:15px;
- background:#222;
- border-radius:10px;
+.option-label{
+  display:block;
+  margin-bottom:4px;
+  font-size:11px;
+  color:#bbb;
+}
+.menu-button.option{
+  border-style:dashed;
 }
 
-  .order-row{
- display:flex;
- align-items:center;
- gap:8px;
- padding:10px 0;
- border-bottom:1px solid #444;
+.order-panel{
+  flex:none;
+  height:34vh;
+  height:34dvh;
+  min-height:215px;
+  max-height:390px;
+  display:flex;
+  flex-direction:column;
+  background:#292929;
+  border-top:2px solid var(--accent);
+  box-shadow:0 -5px 22px #0008;
+  padding:11px 14px calc(10px + env(safe-area-inset-bottom));
 }
-.name{flex:1;font-size:14px}
+.order-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:7px;
+  font-size:16px;
+  font-weight:800;
+}
+.item-count{font-size:12px;color:#bbb}
+.order-list{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+.empty{
+  padding:15px 0;
+  color:#aaa;
+  font-size:14px;
+}
+.order-row{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:8px 0;
+  border-bottom:1px solid #444;
+}
+.order-name{
+  flex:1;
+  min-width:0;
+  font-size:13px;
+  overflow-wrap:anywhere;
+}
 .qty{
- display:flex;
- align-items:center;
- gap:6px;
+  display:flex;
+  align-items:center;
+  gap:6px;
 }
 .qty button{
- width:36px;
- height:36px;
- border:0;
- border-radius:6px;
- font-size:20px;
+  width:32px;
+  height:32px;
+  border:0;
+  border-radius:7px;
+  background:#505050;
+  color:white;
+  font-size:20px;
 }
 .qty span{
- min-width:20px;
- text-align:center;
+  min-width:18px;
+  text-align:center;
+  font-weight:700;
 }
-.item-price{
- min-width:75px;
- text-align:right;
+.line-price{
+  width:72px;
+  text-align:right;
+  font-size:13px;
+  font-weight:700;
 }
-.total,.change{
- display:flex;
- justify-content:space-between;
- margin-top:15px;
- font-size:23px;
- font-weight:bold;
+.order-footer{
+  flex:none;
+  padding-top:9px;
+  border-top:1px solid #555;
+}
+.total-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:9px;
+  font-size:17px;
+  font-weight:800;
+}
+.total-value{
+  color:var(--accent);
+  font-size:28px;
+}
+.primary{
+  width:100%;
+  padding:14px;
+  border:0;
+  border-radius:10px;
+  background:var(--green);
+  color:white;
+  font-size:18px;
+  font-weight:800;
+}
+.secondary{
+  padding:12px;
+  border:0;
+  border-radius:9px;
+  background:#454545;
+  color:white;
+  font-weight:700;
+}
+.danger{background:#842c2c}
+.utility-bar{
+  display:flex;
+  gap:10px;
+  padding:8px 15px 0;
+}
+.utility-bar button{flex:1}
+
+.screen{
+  position:fixed;
+  inset:0;
+  z-index:20;
+  display:flex;
+  flex-direction:column;
+  background:#111;
+}
+.screen-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 15px;
+  background:#222;
+  font-size:19px;
+  font-weight:800;
+}
+.back{
+  padding:9px 13px;
+  border:0;
+  border-radius:8px;
+  background:#444;
+  color:white;
+}
+.screen-content{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  padding:18px 15px calc(22px + env(safe-area-inset-bottom));
+}
+.card{
+  padding:17px;
+  margin-bottom:14px;
+  border-radius:12px;
+  background:var(--panel);
+}
+.card h2{
+  margin:0 0 14px;
+  font-size:18px;
+}
+.payment-total{
+  color:var(--accent);
+  font-size:34px;
+  font-weight:800;
+  text-align:right;
 }
 #received{
- width:100%;
- padding:15px;
- border:0;
- border-radius:8px;
- font-size:20px;
+  width:100%;
+  padding:15px;
+  border:1px solid #666;
+  border-radius:9px;
+  background:white;
+  color:#111;
+  font-size:24px;
 }
-.action{
- display:block;
- width:calc(100% - 30px);
- margin:10px 15px;
- padding:16px;
- border:0;
- border-radius:10px;
- color:white;
- font-size:17px;
- font-weight:bold;
- background:#444;
+.change-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:17px;
+  font-size:19px;
+  font-weight:800;
 }
-.complete{background:#287a36}
-.complete:disabled{
- background:#444;
- color:#888;
+#change{font-size:28px;color:var(--accent)}
+.quick-cash{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:12px;
 }
-.sales{display:none}
+.quick-cash button{
+  padding:12px 5px;
+  border:0;
+  border-radius:8px;
+  background:#424242;
+  color:white;
+  font-weight:700;
+}
+.screen-actions{
+  display:grid;
+  gap:10px;
+  margin-top:15px;
+}
 .sales-row{
- display:flex;
- justify-content:space-between;
- padding:10px 0;
- border-bottom:1px solid #444;
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:11px 0;
+  border-bottom:1px solid #444;
+  font-size:14px;
 }
+.sales-row span{overflow-wrap:anywhere}
+.sales-row strong{white-space:nowrap}
 .message{
- display:none;
- position:fixed;
- bottom:20px;
- left:15px;
- right:15px;
- padding:15px;
- background:#333;
- border-radius:10px;
- text-align:center;
+  position:fixed;
+  z-index:50;
+  left:15px;
+  right:15px;
+  bottom:calc(15px + env(safe-area-inset-bottom));
+  padding:14px;
+  border-radius:10px;
+  background:#6a512d;
+  color:white;
+  text-align:center;
+  font-weight:800;
+  box-shadow:0 5px 20px #0009;
+  pointer-events:none;
+}
+@media(min-width:700px){
+  .menu-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .order-panel{height:33vh}
+  .screen-content{width:min(100%,650px);margin:0 auto}
 }
 </style>
 </head>
+
 <body>
-<header>PIECE会計</header>
-<div id="menu"></div>
+<div class="app" id="mainScreen">
+  <header>PIECE会計</header>
 
-<div class="panel">
-<h2>注文内容</h2>
-<div id="orderList">
-商品をタップしてください
-</div>
-<div class="total">
-<span>合計</span>
-<span id="total">¥0</span>
-</div>
-</div>
+  <main class="menu-area" id="menuArea">
+    <div id="menu"></div>
+    <div class="utility-bar">
+      <button class="secondary" id="salesButton">📊 売上確認</button>
+      <button class="secondary" id="resetButton">注文リセット</button>
+    </div>
+  </main>
 
-<div class="panel">
-<h2>お会計</h2>
-<input
- id="received"
- type="number"
- inputmode="numeric"
- min="0"
- placeholder="お預かり金額"
->
-<div class="change">
-<span>お釣り</span>
-<span id="change">¥0</span>
-</div>
-</div>
-
-<button
- class="action complete"
- id="completeButton"
- disabled
->会計完了</button>
-
-<button
- class="action"
- id="resetButton"
->会計をリセット</button>
-
-<button
- class="action"
- id="salesButton"
->📊 売上を確認</button>
-
-<div class="panel sales" id="sales">
-<h2>売上集計</h2>
-<div class="sales-row">
-<span>会計件数</span>
-<strong id="salesCount">0件</strong>
-</div>
-<div class="sales-row">
-<span>売上金額</span>
-<strong id="salesTotal">¥0</strong>
-</div>
-<h2 style="margin-top:20px">
-商品別販売数
-</h2>
-<div id="productSales"></div>
-<button
- class="action"
- id="deleteSales"
- style="width:100%;margin:20px 0 0;background:#822"
->売上データを全削除</button>
+  <section class="order-panel">
+    <div class="order-heading">
+      <span>🛒 注文内容</span>
+      <span class="item-count" id="itemCount">0点</span>
+    </div>
+    <div class="order-list" id="orderList">
+      <div class="empty">商品をタップしてください</div>
+    </div>
+    <div class="order-footer">
+      <div class="total-row">
+        <span>合計</span>
+        <span class="total-value" id="total">¥0</span>
+      </div>
+      <button class="primary" id="checkoutButton" disabled>
+        お会計へ →
+      </button>
+    </div>
+  </section>
 </div>
 
-<div class="message" id="message"></div>
+<section class="screen" id="checkoutScreen" hidden>
+  <div class="screen-header">
+    <button class="back" id="backCheckout">← 戻る</button>
+    <span>お会計</span>
+  </div>
+  <div class="screen-content">
+    <div class="card">
+      <h2>お支払い金額</h2>
+      <div class="payment-total" id="checkoutTotal">¥0</div>
+      <div id="checkoutItems"></div>
+    </div>
+
+    <div class="card">
+      <h2>お預かり金額</h2>
+      <input id="received" type="number"
+        inputmode="numeric" min="0" step="1"
+        placeholder="金額を入力">
+      <div class="quick-cash">
+        <button data-cash="exact">ちょうど</button>
+        <button data-cash="1000">¥1,000</button>
+        <button data-cash="2000">¥2,000</button>
+        <button data-cash="5000">¥5,000</button>
+        <button data-cash="10000">¥10,000</button>
+        <button data-cash="20000">¥20,000</button>
+      </div>
+      <div class="change-row">
+        <span>お釣り</span>
+        <span id="change">¥0</span>
+      </div>
+    </div>
+
+    <div class="screen-actions">
+      <button class="primary" id="completeButton" disabled>
+        会計完了・売上保存
+      </button>
+      <button class="secondary" id="cancelCheckout">
+        注文画面へ戻る
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="salesScreen" hidden>
+  <div class="screen-header">
+    <button class="back" id="backSales">← 戻る</button>
+    <span>売上集計</span>
+  </div>
+  <div class="screen-content">
+    <div class="card">
+      <div class="sales-row">
+        <span>会計件数</span>
+        <strong id="salesCount">0件</strong>
+      </div>
+      <div class="sales-row">
+        <span>売上金額</span>
+        <strong id="salesTotal">¥0</strong>
+      </div>
+    </div>
+    <div class="card">
+      <h2>商品別販売数</h2>
+      <div id="productSales"></div>
+    </div>
+    <button class="secondary danger" id="deleteSales"
+      style="width:100%">
+      売上データを全削除
+    </button>
+  </div>
+</section>
+
+<div class="message" id="message" hidden></div>
 
 <script>
-const menuItems = [
-{category:"FOOD",id:"kids_curry",name:"お子さまカレー",price:500},
-{category:"FOOD",id:"chickpea_curry",name:"ひよこ豆と挽き肉のカレー",price:800},
-{category:"FOOD",id:"jerk_curry",name:"ジャークチキンカレー（6切れ）",price:1300},
-{category:"FOOD",id:"jerk_extra",name:"ジャークチキン増し（＋3切れ）",price:200},
-{category:"FOOD",id:"spicy",name:"辛さUP",price:100},
-{category:"FOOD",id:"jerk_chicken",name:"ジャークチキン（6切れ）",price:600},
-{category:"FOOD",id:"nuts",name:"ミックスナッツ",price:500},
-{category:"FOOD",id:"venison",name:"鹿ジャーキー",price:700},{category:"ALCOHOL",id:"kabosu_sour",name:"臼杵産かぼすサワー",price:600},
-{category:"ALCOHOL",id:"beer",name:"瓶ビール（アサヒ・コロナ）",price:800},
-{category:"ALCOHOL",id:"kabosu_gin",name:"臼杵かぼすジントニック",price:700},
-{category:"ALCOHOL",id:"gin_tonic",name:"ジントニック",price:600},
-{category:"ALCOHOL",id:"tequila_sunrise",name:"竹宵テキーラサンライズ",price:600},
-{category:"ALCOHOL",id:"tequila",name:"テキーラ",price:500},
-{category:"ALCOHOL",id:"highball",name:"ハイボール",price:600},
-{category:"ALCOHOL",id:"nikaso",name:"ニカソー",price:600}　,{category:"NON-ALCOHOL",id:"green_tea",name:"緑茶",price:200},
-{category:"NON-ALCOHOL",id:"orange",name:"オレンジジュース",price:200},
-{category:"NON-ALCOHOL",id:"mocktail",name:"ノンアルコールカクテル",price:500},
-{category:"NON-ALCOHOL",id:"nonalc_beer",name:"ノンアルコールビール",price:400},
+"use strict";
 
-{category:"SET",id:"jerk_sour",name:"JERK & SOUR",price:1000},
-{category:"SET",id:"jerk_beer",name:"JERK & BEER",price:1200},
-{category:"SET",id:"snack_set",name:"おつまみセット",price:1000}
+const menuItems = [
+  {category:"FOOD",id:"kids_curry",name:"お子さまカレー",price:500},
+  {category:"FOOD",id:"chickpea_curry",name:"ひよこ豆と挽き肉のカレー",price:800},
+  {category:"FOOD",id:"jerk_curry",name:"ジャークチキンカレー（6切れ）",price:1300},
+  {category:"FOOD",id:"jerk_extra",name:"ジャークチキン増し（＋3切れ）",price:200,option:true},
+  {category:"FOOD",id:"spicy",name:"辛さUP",price:100,option:true},
+  {category:"FOOD",id:"jerk_chicken",name:"ジャークチキン（6切れ）",price:600},
+  {category:"FOOD",id:"nuts",name:"ミックスナッツ",price:500},
+  {category:"FOOD",id:"venison",name:"鹿ジャーキー",price:700},
+
+  {category:"ALCOHOL",id:"kabosu_sour",name:"臼杵産かぼすサワー",price:600},
+  {category:"ALCOHOL",id:"beer",name:"瓶ビール（アサヒ・コロナ）",price:800},
+  {category:"ALCOHOL",id:"kabosu_gin",name:"臼杵かぼすジントニック",price:700},
+  {category:"ALCOHOL",id:"gin_tonic",name:"ジントニック",price:600},
+  {category:"ALCOHOL",id:"tequila_sunrise",name:"竹宵テキーラサンライズ",price:600},
+  {category:"ALCOHOL",id:"tequila",name:"テキーラ",price:500},
+  {category:"ALCOHOL",id:"highball",name:"ハイボール",price:600},
+  {category:"ALCOHOL",id:"nikaso",name:"ニカソー",price:600},
+
+  {category:"NON-ALCOHOL",id:"green_tea",name:"緑茶",price:200},
+  {category:"NON-ALCOHOL",id:"orange",name:"オレンジジュース",price:200},
+  {category:"NON-ALCOHOL",id:"mocktail",name:"ノンアルコールカクテル",price:500},
+  {category:"NON-ALCOHOL",id:"nonalc_beer",name:"ノンアルコールビール",price:400},
+
+  {category:"SET",id:"jerk_sour",name:"JERK & SOUR",price:1000},
+  {category:"SET",id:"jerk_beer",name:"JERK & BEER",price:1200},
+  {category:"SET",id:"snack_set",name:"おつまみセット",price:1000}
 ];
 
+const SALES_KEY = "pieceSales";
+const categories = ["FOOD","ALCOHOL","NON-ALCOHOL","SET"];
 let order = {};
+let messageTimer;
 
-function yen(n){
- return "¥"+n.toLocaleString("ja-JP");
-}
-  function createMenu(){
+const el = id => document.getElementById(id);
+const yen = n => "¥" + Number(n).toLocaleString("ja-JP");
 
- const menu =
-  document.getElementById("menu");
-
- menu.innerHTML = "";
-
- const categories = [
-  "FOOD",
-  "ALCOHOL",
-  "NON-ALCOHOL",
-  "SET"
- ];
-
- categories.forEach(category => {
-
-  const title =
-   document.createElement("div");
-
-  title.className = "category";
-  title.textContent = category;
-  menu.appendChild(title);
-
-  const grid =
-   document.createElement("div");
-
-  grid.className = "menu-grid";
-
-  menuItems
-   .filter(item => item.category === category)
-   .forEach(item => {
-
-    const button =
-     document.createElement("button");
-
-    button.className = "menu-button";
-
-    button.innerHTML =
-     item.name +
-     '<span class="price">' +
-     yen(item.price) +
-     '</span>';
-
-    button.onclick = function(){
-     addItem(item.id);
-    };
-
-    grid.appendChild(button);
-
-   });
-
-  menu.appendChild(grid);
-
- });
-
+function vibrate(ms=30){
+  if(typeof navigator.vibrate === "function"){
+    try{navigator.vibrate(ms)}catch(e){}
   }
-
-  function addItem(id){
- order[id] = (order[id] || 0) + 1;
- render();
-}
-
-function changeQuantity(id,amount){
- if(!order[id]) return;
-
- order[id] += amount;
-
- if(order[id] <= 0){
-  delete order[id];
- }
-
- render();
-}
-
-function getTotal(){
- return menuItems.reduce((sum,item)=>{
-  return sum +
-   item.price * (order[item.id] || 0);
- },0);
-}
-
-function render(){
- const list =
-  document.getElementById("orderList");
-
- list.innerHTML = "";
-
- menuItems.forEach(item=>{
-  const qty = order[item.id] || 0;
-  if(qty === 0) return;
-
-  const row =
-   document.createElement("div");
-
-  row.className = "order-row";
-
-  const name =
-   document.createElement("div");
-  name.className = "name";
-  name.textContent = item.name;
-
-  const controls =
-   document.createElement("div");
-  controls.className = "qty";
-
-  const minus =
-   document.createElement("button");
-  minus.textContent = "−";
-  minus.onclick = ()=>changeQuantity(item.id,-1);
-
-  const count =
-   document.createElement("span");
-  count.textContent = qty;
-
-  const plus =
-   document.createElement("button");
-  plus.textContent = "＋";
-  plus.onclick = ()=>changeQuantity(item.id,1);
-
-  controls.append(minus,count,plus);
-
-  const price =
-   document.createElement("div");
-  price.className = "item-price";
-  price.textContent = yen(item.price * qty);
-
-  row.append(name,controls,price);
-  list.appendChild(row);
- });
-
- if(!list.children.length){
-  list.textContent = "商品をタップしてください";
- }
-
- document.getElementById("total").textContent =
-  yen(getTotal());
-
- calculateChange();
-}
-
-  function calculateChange(){
-
- const total = getTotal();
-
- const received = Number(
-  document.getElementById("received").value
- );
-
- const change = received - total;
-
- document.getElementById("change").textContent =
-  yen(Math.max(change,0));
-
- document.getElementById("completeButton").disabled =
-  !(total > 0 && received >= total);
-}
-
-document.getElementById("received")
- .addEventListener("input",calculateChange);
-
-  function saveSale(){
-
- const total = getTotal();
-
- const received = Number(
-  document.getElementById("received").value
- );
-
- if(total <= 0 || received < total){
-  return;
- }
-
- const sales = JSON.parse(
-  localStorage.getItem("pieceSales") || "[]"
- );
-
- sales.push({
-  date:new Date().toISOString(),
-  total:total,
-  received:received,
-  change:received-total,
-  items:{...order}
- });
-
- try{
-  localStorage.setItem(
-   "pieceSales",
-   JSON.stringify(sales)
-  );
- }catch(error){
-  alert("売上を保存できませんでした。");
-  return;
- }
-
- order = {};
-
- document.getElementById("received").value = "";
-
- render();
- updateSales();
- showMessage("会計完了しました");
 }
 
 function showMessage(text){
-
- const message =
-  document.getElementById("message");
-
- message.textContent = text;
- message.style.display = "block";
-
- setTimeout(()=>{
-  message.style.display = "none";
- },2000);
-
+  const node=el("message");
+  node.textContent=text;
+  node.hidden=false;
+  clearTimeout(messageTimer);
+  messageTimer=setTimeout(()=>node.hidden=true,1600);
 }
 
-  function updateSales(){
+function createMenu(){
+  const menu=el("menu");
+  menu.replaceChildren();
 
- const sales = JSON.parse(
-  localStorage.getItem("pieceSales") || "[]"
- );
+  categories.forEach(category=>{
+    const heading=document.createElement("div");
+    heading.className="category";
+    heading.textContent=category;
+    menu.appendChild(heading);
 
- const total = sales.reduce(
-  (sum,sale)=>sum+sale.total,0
- );
+    const grid=document.createElement("div");
+    grid.className="menu-grid";
 
- document.getElementById("salesCount")
-  .textContent = sales.length+"件";
+    menuItems.filter(item=>item.category===category)
+      .forEach(item=>{
+        const button=document.createElement("button");
+        button.className="menu-button"+(item.option?" option":"");
 
- document.getElementById("salesTotal")
-  .textContent = yen(total);
+        if(item.option){
+          const label=document.createElement("span");
+          label.className="option-label";
+          label.textContent="追加オプション";
+          button.appendChild(label);
+        }
 
- const counts = {};
+        const name=document.createElement("span");
+        name.textContent=item.name;
 
- sales.forEach(sale=>{
-  Object.entries(sale.items || {})
-   .forEach(([id,qty])=>{
-    counts[id] = (counts[id] || 0)+qty;
-   });
- });
+        const price=document.createElement("span");
+        price.className="price";
+        price.textContent=yen(item.price);
 
- const container =
-  document.getElementById("productSales");
+        button.append(name,price);
+        button.addEventListener("click",()=>{
+          addItem(item.id);
+          button.classList.remove("flash");
+          void button.offsetWidth;
+          button.classList.add("flash");
+          setTimeout(()=>button.classList.remove("flash"),230);
+        });
+        grid.appendChild(button);
+      });
 
- container.innerHTML = "";
+    menu.appendChild(grid);
+  });
+}
 
- menuItems.forEach(item=>{
-  const row = document.createElement("div");
-  row.className = "sales-row";
+function addItem(id){
+  const item=menuItems.find(x=>x.id===id);
+  if(!item)return;
 
-  const name = document.createElement("span");
-  name.textContent = item.name;
+  order[id]=(order[id]||0)+1;
+  vibrate(30);
+  render();
+  showMessage(item.name+" を追加");
+}
 
-  const count = document.createElement("strong");
-  count.textContent = (counts[item.id] || 0)+"個";
+function changeQuantity(id,amount){
+  if(!order[id])return;
+  order[id]+=amount;
+  if(order[id]<=0)delete order[id];
+  vibrate(20);
+  render();
+}
 
-  row.append(name,count);
-  container.appendChild(row);
- });
+function getTotal(){
+  return menuItems.reduce(
+    (sum,item)=>sum+item.price*(order[item.id]||0),0
+  );
+}
 
+function render(){
+  const list=el("orderList");
+  list.replaceChildren();
+
+  let count=0;
+
+  menuItems.forEach(item=>{
+    const qty=order[item.id]||0;
+    if(!qty)return;
+    count+=qty;
+
+    const row=document.createElement("div");
+    row.className="order-row";
+
+    const name=document.createElement("div");
+    name.className="order-name";
+    name.textContent=item.name;
+
+    const controls=document.createElement("div");
+    controls.className="qty";
+
+    const minus=document.createElement("button");
+    minus.textContent="−";
+    minus.setAttribute("aria-label",item.name+"を減らす");
+    minus.onclick=()=>changeQuantity(item.id,-1);
+
+    const number=document.createElement("span");
+    number.textContent=qty;
+
+    const plus=document.createElement("button");
+    plus.textContent="+";
+    plus.setAttribute("aria-label",item.name+"を増やす");
+    plus.onclick=()=>changeQuantity(item.id,1);
+
+    controls.append(minus,number,plus);
+
+    const price=document.createElement("div");
+    price.className="line-price";
+    price.textContent=yen(item.price*qty);
+
+    row.append(name,controls,price);
+    list.appendChild(row);
+  });
+
+  if(!count){
+    const empty=document.createElement("div");
+    empty.className="empty";
+    empty.textContent="商品をタップしてください";
+    list.appendChild(empty);
   }
 
-  function toggleSales(){
- const panel = document.getElementById("sales");
-
- if(panel.style.display === "block"){
-  panel.style.display = "none";
- }else{
-  updateSales();
-  panel.style.display = "block";
- }
+  el("itemCount").textContent=count+"点";
+  el("total").textContent=yen(getTotal());
+  el("checkoutButton").disabled=getTotal()<=0;
 }
 
-function deleteSales(){
- if(!confirm("売上データをすべて削除しますか？")){
-  return;
- }
+function openScreen(id){
+  el("checkoutScreen").hidden=id!=="checkoutScreen";
+  el("salesScreen").hidden=id!=="salesScreen";
+}
 
- localStorage.removeItem("pieceSales");
- updateSales();
- showMessage("売上データを削除しました");
+function openCheckout(){
+  if(getTotal()<=0)return;
+
+  el("checkoutTotal").textContent=yen(getTotal());
+  el("received").value="";
+  el("change").textContent="¥0";
+
+  const container=el("checkoutItems");
+  container.replaceChildren();
+
+  menuItems.forEach(item=>{
+    const qty=order[item.id]||0;
+    if(!qty)return;
+
+    const row=document.createElement("div");
+    row.className="sales-row";
+
+    const name=document.createElement("span");
+    name.textContent=item.name+" ×"+qty;
+
+    const price=document.createElement("strong");
+    price.textContent=yen(item.price*qty);
+
+    row.append(name,price);
+    container.appendChild(row);
+  });
+
+  calculateChange();
+  openScreen("checkoutScreen");
+  vibrate(20);
+}
+
+function calculateChange(){
+  const input=el("received").value.trim();
+  const received=Number(input);
+  const total=getTotal();
+  const valid=input!=="" &&
+    Number.isSafeInteger(received) &&
+    received>=total &&
+    total>0;
+
+  el("change").textContent=
+    yen(valid?received-total:0);
+  el("completeButton").disabled=!valid;
+}
+
+function readSales(){
+  const data=JSON.parse(
+    localStorage.getItem(SALES_KEY)||"[]"
+  );
+  if(!Array.isArray(data))throw Error("売上データ形式が不正です");
+  return data;
+}
+
+function saveSale(){
+  const total=getTotal();
+  const input=el("received").value.trim();
+  const received=Number(input);
+
+  if(input==="" || !Number.isSafeInteger(received) ||
+     total<=0 || received<total)return;
+
+  let sales;
+  try{
+    sales=readSales();
+    sales.push({
+      date:new Date().toISOString(),
+      total,
+      received,
+      change:received-total,
+      items:{...order}
+    });
+    localStorage.setItem(SALES_KEY,JSON.stringify(sales));
+  }catch(error){
+    alert("売上を保存できませんでした。ブラウザの保存容量を確認してください。");
+    return;
+  }
+
+  order={};
+  el("received").value="";
+  render();
+  updateSales();
+  openScreen(null);
+  vibrate(80);
+  showMessage("会計完了・売上を保存しました");
+}
+
+function updateSales(){
+  let sales;
+  try{
+    sales=readSales();
+  }catch(error){
+    alert("売上データを読み込めませんでした。");
+    return;
+  }
+
+  const total=sales.reduce(
+    (sum,sale)=>sum+(Number(sale.total)||0),0
+  );
+
+  el("salesCount").textContent=sales.length+"件";
+  el("salesTotal").textContent=yen(total);
+
+  const counts={};
+  sales.forEach(sale=>{
+    Object.entries(sale.items||{}).forEach(([id,qty])=>{
+      counts[id]=(counts[id]||0)+(Number(qty)||0);
+    });
+  });
+
+  const container=el("productSales");
+  container.replaceChildren();
+
+  menuItems.forEach(item=>{
+    const row=document.createElement("div");
+    row.className="sales-row";
+
+    const name=document.createElement("span");
+    name.textContent=item.name;
+
+    const count=document.createElement("strong");
+    count.textContent=(counts[item.id]||0)+"個";
+
+    row.append(name,count);
+    container.appendChild(row);
+  });
+
+  const known=new Set(menuItems.map(item=>item.id));
+  const oldCount=Object.entries(counts)
+    .filter(([id])=>!known.has(id))
+    .reduce((sum,[,qty])=>sum+qty,0);
+
+  if(oldCount>0){
+    const row=document.createElement("div");
+    row.className="sales-row";
+    const label=document.createElement("span");
+    label.textContent="旧メニュー・集計対象外の商品";
+    const count=document.createElement("strong");
+    count.textContent=oldCount+"個";
+    row.append(label,count);
+    container.appendChild(row);
+  }
 }
 
 function resetOrder(){
- order = {};
- document.getElementById("received").value = "";
- render();
+  if(getTotal()>0 &&
+     !confirm("現在の注文をリセットしますか？"))return;
+  order={};
+  render();
+  vibrate(20);
+  showMessage("注文をリセットしました");
 }
 
-document.getElementById("completeButton")
- .addEventListener("click",saveSale);
+function deleteSales(){
+  if(!confirm("売上データをすべて削除しますか？"))return;
+  if(!confirm("元に戻せません。本当に削除しますか？"))return;
 
-document.getElementById("resetButton")
- .addEventListener("click",resetOrder);
+  try{
+    localStorage.removeItem(SALES_KEY);
+    updateSales();
+    showMessage("売上データを削除しました");
+  }catch(error){
+    alert("売上データを削除できませんでした。");
+  }
+}
 
-document.getElementById("salesButton")
- .addEventListener("click",toggleSales);
+el("checkoutButton").onclick=openCheckout;
+el("backCheckout").onclick=()=>openScreen(null);
+el("cancelCheckout").onclick=()=>openScreen(null);
+el("received").oninput=calculateChange;
+el("completeButton").onclick=saveSale;
 
-document.getElementById("deleteSales")
- .addEventListener("click",deleteSales);
+document.querySelectorAll("[data-cash]").forEach(button=>{
+  button.onclick=()=>{
+    const value=button.dataset.cash;
+    el("received").value=
+      value==="exact"?getTotal():Number(value);
+    calculateChange();
+    vibrate(15);
+  };
+});
+
+el("salesButton").onclick=()=>{
+  updateSales();
+  openScreen("salesScreen");
+};
+el("backSales").onclick=()=>openScreen(null);
+el("resetButton").onclick=resetOrder;
+el("deleteSales").onclick=deleteSales;
 
 createMenu();
 render();
-updateSales();
-
 </script>
 </body>
 </html>
-
